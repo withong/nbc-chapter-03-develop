@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import task.schedule.dto.ScheduleResponse;
+import task.schedule.dto.SearchScheduleRequest;
 import task.schedule.entity.Schedules;
 import task.schedule.entity.Users;
 import task.schedule.exception.CustomException;
@@ -31,9 +32,9 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public List<ScheduleResponse> findSchedulesByUser(Long userId) {
+    public List<ScheduleResponse> findSchedulesByCondition(Long userId, SearchScheduleRequest request) {
         Users user = getUserById(userId);
-        List<Schedules> list = scheduleRepository.findByUser(user);
+        List<Schedules> list = scheduleRepository.findByCondition(userId, request);
 
         return list.stream().map(ScheduleResponse::new).toList();
     }

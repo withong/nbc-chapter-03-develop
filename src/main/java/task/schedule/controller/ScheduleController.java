@@ -36,12 +36,12 @@ public class ScheduleController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ScheduleResponse>> findSchedulesByUser(
-            HttpServletRequest httpRequest
-//            @Validated @ModelAttribute SearchScheduleRequest request
+    public ResponseEntity<List<ScheduleResponse>> findSchedulesByCondition(
+            HttpServletRequest httpRequest,
+            @Validated @ModelAttribute SearchScheduleRequest request
     ) {
         LoginResponse loginUser = (LoginResponse) httpRequest.getSession(false).getAttribute(Const.LOGIN_USER);
-        List<ScheduleResponse> response = scheduleService.findSchedulesByUser(loginUser.getId());
+        List<ScheduleResponse> response = scheduleService.findSchedulesByCondition(loginUser.getId(), request);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
