@@ -1,8 +1,10 @@
+/*
 package task.schedule.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,13 +22,15 @@ public class UserController {
 
     private final UserService userService;
 
-    /**
+    */
+/**
      * 사용자 등록
      *
      * @param request 등록할 사용자 정보
      *                - [필수] 이름, 이메일, 비밀번호
      * @return 생성된 사용자 정보
-     */
+     *//*
+
     @PostMapping("/signup")
     public ResponseEntity<UserResponse> signUp(@RequestBody @Valid CreateUserRequest request) {
         UserResponse response = userService.signUp(
@@ -38,13 +42,15 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    /**
+    */
+/**
      * 로그인
      *
      * @param request
      * @param httpRequest
      * @return
-     */
+     *//*
+
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest request,
                                                HttpServletRequest httpRequest) {
@@ -56,51 +62,62 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    /**
+    */
+/**
+     * 특정 사용자 조회
      *
-     * @param request
-     * @return
-     */
-    @GetMapping("/me")
-    public ResponseEntity<UserResponse> getCurrentUser(HttpServletRequest request) {
-        LoginResponse loginUser = (LoginResponse) request.getSession(false).getAttribute(Const.LOGIN_USER);
-        UserResponse response = userService.findById(loginUser.getId());
+     * @param id 사용자 식별자
+     * @return 조회된 사용자 정보
+     *//*
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserResponse> findUserById(@NotNull @PathVariable("id") Long id) {
+        UserResponse response = userService.findById(id);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PatchMapping("/info/name")
-    public ResponseEntity<UserResponse> updateUserName(HttpServletRequest httpRequest,
+    */
+/**
+     * 사용자 정보 변경
+     *
+     * @param id      사용자 식별자
+     * @param request 변경할 사용자 정보
+     *                - [필수] 이름
+     * @return 변경된 사용자 정보
+     * - 변경된 내용이 없을 경우 204 No Content 응답
+     *//*
+
+    @PatchMapping("/{id}/name")
+    public ResponseEntity<UserResponse> updateUserName(@NotNull @PathVariable("id") Long id,
                                                        @RequestBody @Valid UpdateNameRequest request) {
-        LoginResponse loginUser = (LoginResponse) httpRequest.getSession(false).getAttribute(Const.LOGIN_USER);
-        UserResponse response = userService.updateName(loginUser.getId(), request.getName());
+        UserResponse response = userService.updateName(id, request.getName());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PatchMapping("/info/password")
-    public ResponseEntity<UserResponse> updateUserPassword(HttpServletRequest httpRequest,
-                                                           @RequestBody @Valid UpdatePasswordRequest request) {
-        LoginResponse loginUser = (LoginResponse) httpRequest.getSession(false).getAttribute(Const.LOGIN_USER);
-        UserResponse response = userService.updatePassword(
-                loginUser.getId(), request.getOldPassword(), request.getNewPassword());
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    @PatchMapping("/{id}/password")
+    public ResponseEntity<UserResponse> updateUserPassword(
+            @NotNull @PathVariable("id") Long id,
+            @RequestBody @Valid UpdatePasswordRequest request
+    ) {
+        return null;
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<Void> logout(HttpServletRequest httpRequest) {
-        userService.logout(httpRequest);
+    */
+/**
+     * 사용자 삭제
+     *
+     * @param id 사용자 식별자
+     * @return 성공 시 204 No Content 응답
+     * - 연관된 일정도 함께 삭제됨
+     *//*
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @DeleteMapping
-    public ResponseEntity<Void> deleteUser(HttpServletRequest httpRequest) {
-        LoginResponse loginUser = (LoginResponse) httpRequest.getSession(false).getAttribute(Const.LOGIN_USER);
-        userService.deleteUser(loginUser.getId());
-        userService.logout(httpRequest);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@NotNull @PathVariable("id") Long id) {
+        userService.deleteUser(id);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
+*/
