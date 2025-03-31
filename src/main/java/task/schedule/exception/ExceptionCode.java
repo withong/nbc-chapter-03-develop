@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum ExceptionCode {
 
+    NOT_LOGINED(HttpStatus.UNAUTHORIZED, "NOT_LOGINED", "로그인 후 이용 가능합니다."),
+    LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "LOGIN_FAILED", "이메일 또는 비밀번호가 일치하지 않습니다."),
     VALIDATION_FAILED(HttpStatus.BAD_REQUEST, "VALIDATION_FAILED", "입력 값이 유효하지 않습니다."),
     INVALID_DATE_FORMAT(HttpStatus.BAD_REQUEST, "INVALID_DATE_FORMAT", "올바른 날짜 형식이 아닙니다."),
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "NOT_FOUND_USER", "사용자가 존재하지 않습니다."),
