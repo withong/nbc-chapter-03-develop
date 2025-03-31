@@ -70,7 +70,8 @@ public class ScheduleController {
     public ResponseEntity<Void> deleteSchedule(@NotNull @PathVariable("id") Long id,
                                                HttpServletRequest httpRequest) {
         LoginResponse loginUser = (LoginResponse) httpRequest.getSession(false).getAttribute(Const.LOGIN_USER);
+        scheduleService.deleteSchedule(id, loginUser.getId());
 
-        return null;
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
