@@ -40,8 +40,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public ScheduleResponse findById(Long id, Long userId) {
-        Schedules schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_SCHEDULE));
+        Schedules schedule = getScheduleById(id);
 
         if (!schedule.getUser().getId().equals(userId)) {
             throw new CustomException(ExceptionCode.UNAUTHORIZED_ACCESS);
@@ -57,8 +56,7 @@ public class ScheduleServiceImpl implements ScheduleService {
             throw new CustomException(ExceptionCode.NO_CHANGES);
         }
 
-        Schedules schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_SCHEDULE));
+        Schedules schedule = getScheduleById(id);
 
         if (!schedule.getUser().getId().equals(userId)) {
             throw new CustomException(ExceptionCode.UNAUTHORIZED_ACCESS);
@@ -77,14 +75,18 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     @Transactional
     public void deleteSchedule(Long id, Long userId) {
-        Schedules schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_SCHEDULE));
+        Schedules schedule = getScheduleById(id);
 
         if (!schedule.getUser().getId().equals(userId)) {
             throw new CustomException(ExceptionCode.UNAUTHORIZED_ACCESS);
         }
 
         scheduleRepository.delete(schedule);
+    }
+
+    private Schedules getScheduleById(Long id) {
+        return scheduleRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_SCHEDULE));
     }
 
     private Users getUserById(Long userId) {
