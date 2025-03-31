@@ -23,9 +23,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public ScheduleResponse saveSchedule(Long userId, LocalDate date, String content) {
-        Users user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_USER));
-
+        Users user = getUserById(userId);
         Schedules schedule = new Schedules(user, date, content);
         Schedules saved = scheduleRepository.save(schedule);
 
@@ -34,9 +32,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public List<ScheduleResponse> findSchedulesByUser(Long userId) {
-        Users user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_USER));
-
+        Users user = getUserById(userId);
         List<Schedules> list = scheduleRepository.findByUser(user);
 
         return list.stream().map(ScheduleResponse::new).toList();
@@ -89,5 +85,10 @@ public class ScheduleServiceImpl implements ScheduleService {
         }
 
         scheduleRepository.delete(schedule);
+    }
+
+    private Users getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_USER));
     }
 }
