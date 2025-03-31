@@ -22,6 +22,10 @@ public class Users extends BaseTimeEntity {
     @Column(nullable = false)
     private String password;
 
+    public Users(Long id) {
+        this.id = id;
+    }
+
     public Users(String name, String email, String password) {
         this.name = name;
         this.email = email;
