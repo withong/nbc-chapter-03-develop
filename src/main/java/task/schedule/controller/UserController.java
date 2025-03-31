@@ -20,13 +20,6 @@ public class UserController {
 
     private final UserService userService;
 
-    /**
-     * 사용자 등록
-     *
-     * @param request 등록할 사용자 정보
-     *                - [필수] 이름, 이메일, 비밀번호
-     * @return 생성된 사용자 정보
-     */
     @PostMapping("/signup")
     public ResponseEntity<UserResponse> signUp(@RequestBody @Valid CreateUserRequest request) {
         UserResponse response = userService.signUp(
@@ -38,13 +31,6 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    /**
-     * 로그인
-     *
-     * @param request
-     * @param httpRequest
-     * @return
-     */
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest request,
                                                HttpServletRequest httpRequest) {
@@ -56,11 +42,6 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    /**
-     *
-     * @param request
-     * @return
-     */
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getCurrentUser(HttpServletRequest request) {
         LoginResponse loginUser = (LoginResponse) request.getSession(false).getAttribute(Const.LOGIN_USER);
