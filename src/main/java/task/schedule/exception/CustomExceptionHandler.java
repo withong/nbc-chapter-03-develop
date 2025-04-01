@@ -26,7 +26,7 @@ public class CustomExceptionHandler {
 
     /**
      * 유효성 검사 예외 처리
-     * - updatedDate는 예외 코드 분기 처리 (INVALID_DATE_FORMAT 뱐환)
+     * - date 예외 코드 분기 처리 (INVALID_DATE_FORMAT 뱐환)
      *
      * @param e MethodArgumentNotValidException (바인딩 실패)
      * @return 예외 응답 (VALIDATION_FAILED 반환)
@@ -35,7 +35,7 @@ public class CustomExceptionHandler {
     protected ResponseEntity<ExceptionResponse> handleValidationException(MethodArgumentNotValidException e) {
         String field = e.getBindingResult().getFieldError().getField();
 
-        if (field.equals("updatedDate")) {
+        if (field.equals("date")) {
             return ExceptionResponse.dtoResponseEntity(ExceptionCode.INVALID_DATE_FORMAT);
         }
 
