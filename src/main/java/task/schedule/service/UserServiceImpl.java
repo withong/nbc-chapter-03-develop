@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import task.schedule.config.PasswordEncoder;
 import task.schedule.dto.LoginResponse;
 import task.schedule.dto.UserResponse;
 import task.schedule.entity.Users;
@@ -16,6 +17,7 @@ import task.schedule.repository.UserRepository;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
+    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
     @Override
@@ -26,7 +28,9 @@ public class UserServiceImpl implements UserService {
             throw new CustomException(ExceptionCode.DUPLICATE_EMAIL);
         }
 
-        Users user = new Users(name, email, password);
+        String encodedPassword = passwordEncoder.encode(password);
+
+        Users user = new Users(name, email, encodedPassword);
         Users saved = userRepository.save(user);
 
         return new UserResponse(saved.getId(), saved.getName(), saved.getEmail());
@@ -34,8 +38,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public LoginResponse login(String email, String password) {
-        Users user = userRepository.findByEmailAndPassword(email, password)
+        Users user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ExceptionCode.LOGIN_FAILED));
+
+        boolean matched = passwordEncoder.matches(password, user.getPassword());
+
+        if (!matched) {
+            throw new CustomException(ExceptionCode.LOGIN_FAILED);
+        }
 
         return new LoginResponse(user.getId(), user.getName(), user.getEmail());
     }
@@ -65,11 +75,14 @@ public class UserServiceImpl implements UserService {
         Users user = userRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_USER));
 
-        if (!user.getPassword().equals(oldPassword)) {
+        boolean matched = passwordEncoder.matches(oldPassword, user.getPassword());
+
+        if (!matched) {
             throw new CustomException(ExceptionCode.INVALID_PASSWORD);
         }
 
-        user.updatePassword(newPassword);
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        user.updatePassword(encodedPassword);
 
         return new UserResponse(user.getId(), user.getName(), user.getEmail());
     }
