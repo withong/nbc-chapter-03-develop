@@ -20,6 +20,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse signUp(String name, String email, String password) {
+        boolean isExist = userRepository.existsByEmail(email);
+
+        if (isExist) {
+            throw new CustomException(ExceptionCode.DUPLICATE_EMAIL);
+        }
 
         Users user = new Users(name, email, password);
         Users saved = userRepository.save(user);
