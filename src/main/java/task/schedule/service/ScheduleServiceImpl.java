@@ -3,12 +3,15 @@ package task.schedule.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import task.schedule.dto.CommentResponse;
 import task.schedule.dto.ScheduleResponse;
 import task.schedule.dto.SearchScheduleRequest;
+import task.schedule.entity.Comments;
 import task.schedule.entity.Schedules;
 import task.schedule.entity.Users;
 import task.schedule.exception.CustomException;
 import task.schedule.exception.ExceptionCode;
+import task.schedule.repository.CommentRepository;
 import task.schedule.repository.ScheduleRepository;
 import task.schedule.repository.UserRepository;
 
@@ -21,6 +24,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
 
     @Override
     public ScheduleResponse saveSchedule(Long userId, LocalDate date, String content) {
@@ -40,12 +44,15 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public ScheduleResponse findUserScheduleById(Long userId, Long id) {
+    public ScheduleResponse findUserScheduleWithComments(Long userId, Long id) {
         Users user = getUserById(userId);
         Schedules schedule = scheduleRepository.findByIdAndUser(id, user)
                 .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_SCHEDULE));
 
-        return new ScheduleResponse(schedule);
+        List<Comments> comments = commentRepository.findCommentsBySchedule(schedule);
+        List<CommentResponse> commentResponses = comments.stream().map(CommentResponse::new).toList();
+
+        return new ScheduleResponse(schedule, commentResponses);
     }
 
     @Override

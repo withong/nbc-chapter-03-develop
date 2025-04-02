@@ -12,7 +12,7 @@ public interface ScheduleService {
 
     List<ScheduleResponse> findSchedulesByCondition(Long userId, SearchScheduleRequest request);
 
-    ScheduleResponse findUserScheduleById(Long userId, Long id);
+    ScheduleResponse findUserScheduleWithComments(Long userId, Long id);
 
     ScheduleResponse updateSchedule(Long id, Long userId, LocalDate date, String content);
 

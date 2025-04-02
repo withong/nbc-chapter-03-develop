@@ -49,7 +49,7 @@ public class ScheduleController {
             @NotNull @PathVariable("userId") Long userId,
             @NotNull @PathVariable("scheduleId") Long scheduleId
     ) {
-        ScheduleResponse response = scheduleService.findUserScheduleById(userId, scheduleId);
+        ScheduleResponse response = scheduleService.findUserScheduleWithComments(userId, scheduleId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
