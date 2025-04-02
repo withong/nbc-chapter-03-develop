@@ -4,6 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -12,7 +14,7 @@ import task.schedule.common.Const;
 import task.schedule.dto.*;
 import task.schedule.service.UserService;
 
-import java.util.List;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Validated
 @RestController
@@ -50,8 +52,10 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserResponse>> findAllUsers() {
-        List<UserResponse> responses = userService.findAllUsers();
+    public ResponseEntity<PageResponse<UserResponse>> findAllUsers(
+            @PageableDefault(size = 10, sort = "updatedAt", direction = DESC) Pageable pageable
+    ) {
+        PageResponse<UserResponse> responses = userService.findAllUsers(pageable);
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 

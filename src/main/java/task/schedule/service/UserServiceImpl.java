@@ -3,18 +3,19 @@ package task.schedule.service;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import task.schedule.config.PasswordEncoder;
 import task.schedule.dto.LoginResponse;
+import task.schedule.dto.PageResponse;
 import task.schedule.dto.UserResponse;
 import task.schedule.entity.Users;
 import task.schedule.exception.CustomException;
 import task.schedule.exception.ExceptionCode;
 import task.schedule.repository.ScheduleRepository;
 import task.schedule.repository.UserRepository;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -55,9 +56,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserResponse> findAllUsers() {
-        List<Users> users = userRepository.findAll();
-        return users.stream().map(UserResponse::new).toList();
+    public PageResponse<UserResponse> findAllUsers(Pageable pageable) {
+        Page<Users> users = userRepository.findAll(pageable);
+        Page<UserResponse> page = users.map(UserResponse::new);
+
+        return new PageResponse<>(
+                page.getContent(),
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.isFirst(),
+                page.isLast(),
+                page.isEmpty()
+        );
     }
 
     @Override

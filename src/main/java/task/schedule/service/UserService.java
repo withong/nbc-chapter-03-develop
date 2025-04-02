@@ -1,10 +1,10 @@
 package task.schedule.service;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.data.domain.Pageable;
 import task.schedule.dto.LoginResponse;
+import task.schedule.dto.PageResponse;
 import task.schedule.dto.UserResponse;
-
-import java.util.List;
 
 public interface UserService {
 
@@ -12,7 +12,7 @@ public interface UserService {
 
     LoginResponse login(String email, String password);
 
-    List<UserResponse> findAllUsers();
+    PageResponse<UserResponse> findAllUsers(Pageable pageable);
 
     UserResponse findById(Long id);
 
