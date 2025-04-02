@@ -13,7 +13,7 @@ public interface ScheduleService {
 
     PageResponse<ScheduleResponse> findSchedulesByCondition(Long userId, SearchScheduleRequest request, Pageable pageable);
 
-    ScheduleResponse findUserScheduleWithComments(Long userId, Long id);
+    ScheduleResponse findUserScheduleWithComments(Long userId, Long id, Pageable pageable);
 
     ScheduleResponse updateSchedule(Long id, Long userId, LocalDate date, String title, String content);
 

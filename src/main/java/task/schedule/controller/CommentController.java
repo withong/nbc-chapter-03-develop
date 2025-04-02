@@ -4,6 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,9 +13,10 @@ import task.schedule.common.Const;
 import task.schedule.dto.CommentRequest;
 import task.schedule.dto.CommentResponse;
 import task.schedule.dto.LoginResponse;
+import task.schedule.dto.PageResponse;
 import task.schedule.service.CommentService;
 
-import java.util.List;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @RestController
 @RequestMapping("/comments")
@@ -33,8 +36,11 @@ public class CommentController {
     }
 
     @GetMapping("/schedule/{scheduleId}")
-    public ResponseEntity<List<CommentResponse>> findScheduleComments(@NotNull @PathVariable("scheduleId") Long scheduleId) {
-        List<CommentResponse> responses = commentService.findScheduleComments(scheduleId);
+    public ResponseEntity<PageResponse<CommentResponse>> findScheduleComments(
+            @NotNull @PathVariable("scheduleId") Long scheduleId,
+            @PageableDefault(size = 10, sort = "updatedAt", direction = DESC) Pageable pageable
+    ) {
+        PageResponse<CommentResponse> responses = commentService.findScheduleComments(scheduleId, pageable);
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 

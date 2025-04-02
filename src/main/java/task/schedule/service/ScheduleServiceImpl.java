@@ -19,7 +19,6 @@ import task.schedule.repository.ScheduleRepository;
 import task.schedule.repository.UserRepository;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -56,14 +55,19 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public ScheduleResponse findUserScheduleWithComments(Long userId, Long id) {
+    public ScheduleResponse findUserScheduleWithComments(Long userId, Long id, Pageable pageable) {
         Users user = getUserById(userId);
         Schedules schedule = scheduleRepository.findByIdAndUser(id, user)
                 .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_SCHEDULE));
 
         long commentCount = commentRepository.countCommentsBySchedule(schedule);
-        List<Comments> comments = commentRepository.findCommentsBySchedule(schedule);
-        List<CommentResponse> commentResponses = comments.stream().map(CommentResponse::new).toList();
+
+        Page<Comments> comments = commentRepository.findBySchedule(schedule, pageable);
+        Page<CommentResponse> page = comments.map(CommentResponse::new);
+        PageResponse<CommentResponse> commentResponses = new PageResponse<>(
+                page.getContent(), page.getNumber(), page.getSize(), page.getTotalElements(),
+                page.getTotalPages(), page.isFirst(), page.isLast(), page.isEmpty()
+        );
 
         return new ScheduleResponse(schedule, commentCount, commentResponses);
     }

@@ -5,7 +5,6 @@ import lombok.Getter;
 import task.schedule.entity.Schedules;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -17,7 +16,7 @@ public class ScheduleResponse {
     private final String title;
     private final String content;
     private long commentCount;
-    private List<CommentResponse> comments;
+    private PageResponse<CommentResponse> comments;
 
     public ScheduleResponse(Schedules schedules) {
         this.id = schedules.getId();
@@ -36,7 +35,7 @@ public class ScheduleResponse {
         this.commentCount = commentCount;
     }
 
-    public ScheduleResponse(Schedules schedules, long commentCount, List<CommentResponse> comments) {
+    public ScheduleResponse(Schedules schedules, long commentCount, PageResponse<CommentResponse> comments) {
         this.id = schedules.getId();
         this.userName = schedules.getUser().getName();
         this.date = schedules.getDate();

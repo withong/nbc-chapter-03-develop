@@ -51,9 +51,10 @@ public class ScheduleController {
     @GetMapping("/{userId}/{scheduleId}")
     public ResponseEntity<ScheduleResponse> findUserSchedule(
             @NotNull @PathVariable("userId") Long userId,
-            @NotNull @PathVariable("scheduleId") Long scheduleId
+            @NotNull @PathVariable("scheduleId") Long scheduleId,
+            @PageableDefault(size = 10, sort = "updatedAt", direction = DESC) Pageable pageable
     ) {
-        ScheduleResponse response = scheduleService.findUserScheduleWithComments(userId, scheduleId);
+        ScheduleResponse response = scheduleService.findUserScheduleWithComments(userId, scheduleId, pageable);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

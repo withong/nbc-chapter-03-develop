@@ -1,14 +1,14 @@
 package task.schedule.service;
 
+import org.springframework.data.domain.Pageable;
 import task.schedule.dto.CommentResponse;
-
-import java.util.List;
+import task.schedule.dto.PageResponse;
 
 public interface CommentService {
 
     CommentResponse saveComment(Long userId, Long scheduleId, String content);
 
-    List<CommentResponse> findScheduleComments(Long scheduleId);
+    PageResponse<CommentResponse> findScheduleComments(Long scheduleId, Pageable pageable);
 
     CommentResponse findCommentById(Long id);
 

@@ -1,9 +1,12 @@
 package task.schedule.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import task.schedule.dto.CommentResponse;
+import task.schedule.dto.PageResponse;
 import task.schedule.entity.Comments;
 import task.schedule.entity.Schedules;
 import task.schedule.entity.Users;
@@ -12,8 +15,6 @@ import task.schedule.exception.ExceptionCode;
 import task.schedule.repository.CommentRepository;
 import task.schedule.repository.ScheduleRepository;
 import task.schedule.repository.UserRepository;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -35,11 +36,21 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentResponse> findScheduleComments(Long scheduleId) {
+    public PageResponse<CommentResponse> findScheduleComments(Long scheduleId, Pageable pageable) {
         Schedules schedule = getScheduleById(scheduleId);
-        List<Comments> comments = commentRepository.findCommentsBySchedule(schedule);
+        Page<Comments> comments = commentRepository.findBySchedule(schedule, pageable);
+        Page<CommentResponse> page = comments.map(CommentResponse::new);
 
-        return comments.stream().map(CommentResponse::new).toList();
+        return new PageResponse<>(
+                page.getContent(),
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.isFirst(),
+                page.isLast(),
+                page.isEmpty()
+        );
     }
 
     @Override
