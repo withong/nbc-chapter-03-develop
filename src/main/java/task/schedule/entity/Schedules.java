@@ -28,14 +28,19 @@ public class Schedules extends BaseTimeEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private Users user;
 
-    public Schedules(Users user, LocalDate date, String content) {
+    public Schedules(Users user, LocalDate date, String title, String content) {
         this.user = user;
         this.date = date;
+        this.title = title;
         this.content = content;
     }
 
     public void updateDate(LocalDate date) {
         this.date = date;
+    }
+
+    public void updateTitle(String title) {
+        this.title = title;
     }
 
     public void updateContent(String content) {

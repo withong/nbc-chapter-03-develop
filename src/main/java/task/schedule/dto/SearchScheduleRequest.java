@@ -26,6 +26,9 @@ public class SearchScheduleRequest {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private final LocalDate date;
 
-    @Size(max = 200, message = "200자를 초과할 수 없습니다.")
+    @Size(max = 50, message = "제목은 50자를 초과할 수 없습니다.")
+    private final String title;
+
+    @Size(max = 200, message = "내용은 200자를 초과할 수 없습니다.")
     private final String content;
 }
