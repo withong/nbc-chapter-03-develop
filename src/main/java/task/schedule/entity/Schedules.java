@@ -19,6 +19,9 @@ public class Schedules extends BaseTimeEntity {
     private LocalDate date;
 
     @Column(nullable = false, columnDefinition = "TEXT")
+    private String title;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
     @ManyToOne
