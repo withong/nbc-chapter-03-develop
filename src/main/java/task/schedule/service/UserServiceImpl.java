@@ -11,6 +11,7 @@ import task.schedule.dto.UserResponse;
 import task.schedule.entity.Users;
 import task.schedule.exception.CustomException;
 import task.schedule.exception.ExceptionCode;
+import task.schedule.repository.ScheduleRepository;
 import task.schedule.repository.UserRepository;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final ScheduleRepository scheduleRepository;
 
     @Override
     public UserResponse signUp(String name, String email, String password) {
@@ -110,6 +112,7 @@ public class UserServiceImpl implements UserService {
         Users user = userRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_USER));
 
+        scheduleRepository.deleteByUser(user);
         userRepository.delete(user);
     }
 }

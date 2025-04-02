@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface ScheduleRepository extends JpaRepository<Schedules, Long>, ScheduleRepositoryCustom {
 
     Optional<Schedules> findByIdAndUser(Long id, Users user);
+
+    void deleteByUser(Users user);
 }
