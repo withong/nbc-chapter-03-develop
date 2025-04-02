@@ -4,6 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -12,7 +14,7 @@ import task.schedule.common.Const;
 import task.schedule.dto.*;
 import task.schedule.service.ScheduleService;
 
-import java.util.List;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Validated
 @RestController
@@ -29,6 +31,7 @@ public class ScheduleController {
         ScheduleResponse response = scheduleService.saveSchedule(
                 loginUser.getId(),
                 request.getDate(),
+                request.getTitle(),
                 request.getContent()
         );
 
@@ -36,11 +39,12 @@ public class ScheduleController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<List<ScheduleResponse>> findUserSchedulesByCondition(
+    public ResponseEntity<PageResponse<ScheduleResponse>> findUserSchedulesByCondition(
             @NotNull @PathVariable("userId") Long userId,
-            @Validated @ModelAttribute SearchScheduleRequest request
+            @Validated @ModelAttribute SearchScheduleRequest request,
+            @PageableDefault(size = 10, sort = "updatedAt", direction = DESC) Pageable pageable
     ) {
-        List<ScheduleResponse> response = scheduleService.findSchedulesByCondition(userId, request);
+        PageResponse<ScheduleResponse> response = scheduleService.findSchedulesByCondition(userId, request, pageable);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -59,7 +63,7 @@ public class ScheduleController {
                                                             HttpServletRequest httpRequest) {
         LoginResponse loginUser = (LoginResponse) httpRequest.getSession(false).getAttribute(Const.LOGIN_USER);
         ScheduleResponse response = scheduleService.updateSchedule(
-                id, loginUser.getId(), request.getDate(), request.getContent());
+                id, loginUser.getId(), request.getDate(), request.getTitle(), request.getContent());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

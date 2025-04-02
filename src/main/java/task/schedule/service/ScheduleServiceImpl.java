@@ -1,9 +1,12 @@
 package task.schedule.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import task.schedule.dto.CommentResponse;
+import task.schedule.dto.PageResponse;
 import task.schedule.dto.ScheduleResponse;
 import task.schedule.dto.SearchScheduleRequest;
 import task.schedule.entity.Comments;
@@ -27,20 +30,29 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final CommentRepository commentRepository;
 
     @Override
-    public ScheduleResponse saveSchedule(Long userId, LocalDate date, String content) {
+    public ScheduleResponse saveSchedule(Long userId, LocalDate date, String title, String content) {
         Users user = getUserById(userId);
-        Schedules schedule = new Schedules(user, date, content);
+        Schedules schedule = new Schedules(user, date, title, content);
         Schedules saved = scheduleRepository.save(schedule);
 
         return new ScheduleResponse(saved);
     }
 
     @Override
-    public List<ScheduleResponse> findSchedulesByCondition(Long userId, SearchScheduleRequest request) {
+    public PageResponse<ScheduleResponse> findSchedulesByCondition(Long userId, SearchScheduleRequest request, Pageable pageable) {
         Users user = getUserById(userId);
-        List<Schedules> list = scheduleRepository.findByCondition(user.getId(), request);
+        Page<ScheduleResponse> page = scheduleRepository.findByCondition(user.getId(), request, pageable);
 
-        return list.stream().map(ScheduleResponse::new).toList();
+        return new PageResponse<>(
+                page.getContent(),
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.isFirst(),
+                page.isLast(),
+                page.isEmpty()
+        );
     }
 
     @Override
@@ -49,16 +61,17 @@ public class ScheduleServiceImpl implements ScheduleService {
         Schedules schedule = scheduleRepository.findByIdAndUser(id, user)
                 .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_SCHEDULE));
 
+        long commentCount = commentRepository.countCommentsBySchedule(schedule);
         List<Comments> comments = commentRepository.findCommentsBySchedule(schedule);
         List<CommentResponse> commentResponses = comments.stream().map(CommentResponse::new).toList();
 
-        return new ScheduleResponse(schedule, commentResponses);
+        return new ScheduleResponse(schedule, commentCount, commentResponses);
     }
 
     @Override
     @Transactional
-    public ScheduleResponse updateSchedule(Long id, Long userId, LocalDate date, String content) {
-        if (date == null && content == null) {
+    public ScheduleResponse updateSchedule(Long id, Long userId, LocalDate date, String title, String content) {
+        if (date == null && title == null && content == null) {
             throw new CustomException(ExceptionCode.NO_CHANGES);
         }
 
@@ -68,11 +81,14 @@ public class ScheduleServiceImpl implements ScheduleService {
             throw new CustomException(ExceptionCode.UNAUTHORIZED_ACCESS);
         }
 
-        if (schedule.getDate().equals(date) && schedule.getContent().equals(content)) {
+        if (schedule.getDate().equals(date)
+                && schedule.getTitle().equals(title)
+                && schedule.getContent().equals(content)) {
             throw new CustomException(ExceptionCode.NO_CHANGES);
         }
 
         if (date != null) schedule.updateDate(date);
+        if (title != null) schedule.updateTitle(title);
         if (content != null) schedule.updateContent(content);
 
         return new ScheduleResponse(schedule);

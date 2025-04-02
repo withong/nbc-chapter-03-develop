@@ -9,4 +9,6 @@ import java.util.List;
 public interface CommentRepository extends JpaRepository<Comments, Long> {
 
     List<Comments> findCommentsBySchedule(Schedules schedule);
+
+    long countCommentsBySchedule(Schedules schedule);
 }
