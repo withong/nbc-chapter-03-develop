@@ -9,9 +9,13 @@ import java.util.List;
 public interface ScheduleService {
 
     ScheduleResponse saveSchedule(Long userId, LocalDate date, String content);
+
     List<ScheduleResponse> findSchedulesByCondition(Long userId, SearchScheduleRequest request);
-    ScheduleResponse findById(Long id, Long userId);
+
+    ScheduleResponse findUserScheduleById(Long userId, Long id);
+
     ScheduleResponse updateSchedule(Long id, Long userId, LocalDate date, String content);
+
     void deleteSchedule(Long id, Long userId);
 }
 

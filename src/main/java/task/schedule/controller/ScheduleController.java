@@ -35,23 +35,21 @@ public class ScheduleController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @GetMapping
-    public ResponseEntity<List<ScheduleResponse>> findSchedulesByCondition(
-            HttpServletRequest httpRequest,
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<ScheduleResponse>> findUserSchedulesByCondition(
+            @NotNull @PathVariable("userId") Long userId,
             @Validated @ModelAttribute SearchScheduleRequest request
     ) {
-        LoginResponse loginUser = (LoginResponse) httpRequest.getSession(false).getAttribute(Const.LOGIN_USER);
-        List<ScheduleResponse> response = scheduleService.findSchedulesByCondition(loginUser.getId(), request);
-
+        List<ScheduleResponse> response = scheduleService.findSchedulesByCondition(userId, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ScheduleResponse> findScheduleById(@NotNull @PathVariable("id") Long id,
-                                                             HttpServletRequest httpRequest) {
-        LoginResponse loginUser = (LoginResponse) httpRequest.getSession(false).getAttribute(Const.LOGIN_USER);
-        ScheduleResponse response = scheduleService.findById(id, loginUser.getId());
-
+    @GetMapping("/{userId}/{scheduleId}")
+    public ResponseEntity<ScheduleResponse> findUserSchedule(
+            @NotNull @PathVariable("userId") Long userId,
+            @NotNull @PathVariable("scheduleId") Long scheduleId
+    ) {
+        ScheduleResponse response = scheduleService.findUserScheduleById(userId, scheduleId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

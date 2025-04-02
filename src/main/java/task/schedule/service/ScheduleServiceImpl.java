@@ -34,18 +34,16 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public List<ScheduleResponse> findSchedulesByCondition(Long userId, SearchScheduleRequest request) {
         Users user = getUserById(userId);
-        List<Schedules> list = scheduleRepository.findByCondition(userId, request);
+        List<Schedules> list = scheduleRepository.findByCondition(user.getId(), request);
 
         return list.stream().map(ScheduleResponse::new).toList();
     }
 
     @Override
-    public ScheduleResponse findById(Long id, Long userId) {
-        Schedules schedule = getScheduleById(id);
-
-        if (!schedule.getUser().getId().equals(userId)) {
-            throw new CustomException(ExceptionCode.UNAUTHORIZED_ACCESS);
-        }
+    public ScheduleResponse findUserScheduleById(Long userId, Long id) {
+        Users user = getUserById(userId);
+        Schedules schedule = scheduleRepository.findByIdAndUser(id, user)
+                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_SCHEDULE));
 
         return new ScheduleResponse(schedule);
     }

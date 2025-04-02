@@ -12,6 +12,8 @@ import task.schedule.common.Const;
 import task.schedule.dto.*;
 import task.schedule.service.UserService;
 
+import java.util.List;
+
 @Validated
 @RestController
 @RequestMapping("/users")
@@ -34,6 +36,11 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest request,
                                                HttpServletRequest httpRequest) {
+        HttpSession existingSession = httpRequest.getSession(false);
+        if (existingSession != null) {
+            existingSession.invalidate();
+        }
+
         LoginResponse response = userService.login(request.getEmail(), request.getPassword());
 
         HttpSession session = httpRequest.getSession();
@@ -42,8 +49,14 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping
+    public ResponseEntity<List<UserResponse>> findAllUsers() {
+        List<UserResponse> responses = userService.findAllUsers();
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
+
     @GetMapping("/me")
-    public ResponseEntity<UserResponse> getCurrentUser(HttpServletRequest request) {
+    public ResponseEntity<UserResponse> findMe(HttpServletRequest request) {
         LoginResponse loginUser = (LoginResponse) request.getSession(false).getAttribute(Const.LOGIN_USER);
         UserResponse response = userService.findById(loginUser.getId());
 

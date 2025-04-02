@@ -13,6 +13,8 @@ import task.schedule.exception.CustomException;
 import task.schedule.exception.ExceptionCode;
 import task.schedule.repository.UserRepository;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -48,6 +50,12 @@ public class UserServiceImpl implements UserService {
         }
 
         return new LoginResponse(user.getId(), user.getName(), user.getEmail());
+    }
+
+    @Override
+    public List<UserResponse> findAllUsers() {
+        List<Users> users = userRepository.findAll();
+        return users.stream().map(UserResponse::new).toList();
     }
 
     @Override
