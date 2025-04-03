@@ -5,12 +5,21 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
+/**
+ * 사용자 비밀번호 변경 요청 DTO
+ */
 @Getter
 public class UpdatePasswordRequest {
 
+    /**
+     * 현재 비밀번호 (필수)
+     */
     @NotBlank(message = "현재 비밀번호를 입력하세요.")
     private final String oldPassword;
 
+    /**
+     * 변경할 비밀번호 (필수, 최소 8자, 영문자/숫자/특수문자 포함)
+     */
     @NotBlank(message = "변경할 비밀번호를 입력하세요.")
     @Size(min = 8, message = "비밀번호는 최소 8자 이상이어야 합니다.")
     @Pattern(

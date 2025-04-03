@@ -6,14 +6,36 @@ import task.schedule.entity.Comments;
 
 import java.time.LocalDateTime;
 
+/**
+ * 댓글 응답 DTO
+ */
 @Getter
 @AllArgsConstructor
 public class CommentResponse {
 
+    /**
+     * 댓글 식별자
+     */
     private final Long id;
+
+    /**
+     * 일정 식별자
+     */
     private final Long scheduleId;
+
+    /**
+     * 사용자 이름
+     */
     private final String userName;
+
+    /**
+     * 댓글 내용
+     */
     private final String content;
+
+    /**
+     * 마지막 수정 일시
+     */
     private final LocalDateTime updatedAt;
 
     public CommentResponse(Comments comment) {
