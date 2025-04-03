@@ -29,20 +29,24 @@ public class LoginFilter implements Filter {
             HttpSession session = httpRequest.getSession(false);
 
             if (session == null || session.getAttribute(Const.LOGIN_USER) == null) {
+                // 사용자 인증 실패 시 응답 반환 처리
+                
+                // 사용자 정의 예외 코드
                 ExceptionCode code = ExceptionCode.NOT_LOGINED;
 
+                // 사용자 정의 예외 응답 객체
                 ExceptionResponse responseBody = ExceptionResponse.builder()
                         .status(code.getStatus().value())
                         .code(code.getCode())
                         .message(code.getMessage())
                         .build();
 
-                httpResponse.setStatus(code.getStatus().value());
-                httpResponse.setContentType("application/json");
-                httpResponse.setCharacterEncoding("UTF-8");
+                httpResponse.setStatus(code.getStatus().value());   // 응답 상태 코드 설정
+                httpResponse.setContentType("application/json");    // 응답 타입 설정 (JSON)
+                httpResponse.setCharacterEncoding("UTF-8");         // 응답 인코딩 설정
 
-                String json = new ObjectMapper().writeValueAsString(responseBody);
-                httpResponse.getWriter().write(json);
+                String json = new ObjectMapper().writeValueAsString(responseBody); // 객체를 JSON 문자열로 변환
+                httpResponse.getWriter().write(json); // 응답 바디에 JSON 문자열 작성
 
                 return;
             }
