@@ -24,6 +24,12 @@ public class ScheduleController {
 
     private final ScheduleService scheduleService;
 
+    /**
+     * 일정 등록
+     * @param httpRequest 현재 로그인된 사용자 정보
+     * @param request 등록할 일정 정보
+     * @return 생성된 일정 정보
+     */
     @PostMapping
     public ResponseEntity<ScheduleResponse> saveSchedule(HttpServletRequest httpRequest,
                                                          @RequestBody @Valid CreateScheduleRequest request) {
@@ -38,6 +44,14 @@ public class ScheduleController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    /**
+     * 특정 사용자의 일정 목록 조회
+     * @param userId 사용자 식별자
+     * @param request 조회 조건
+     * @param pageable 페이징 처리
+     * @return 일정 목록 + 일정별 댓글 개수 + 페이징 정보
+     *         - 일정 목록 조회 시 일정별 댓글 목록(comments)은 null 반환
+     */
     @GetMapping("/{userId}")
     public ResponseEntity<PageResponse<ScheduleResponse>> findUserSchedulesByCondition(
             @NotNull @PathVariable("userId") Long userId,
@@ -48,6 +62,13 @@ public class ScheduleController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    /**
+     * 일정 단건 조회
+     * @param userId 사용자 식별자
+     * @param scheduleId 일정 식별자
+     * @param pageable 페이징 처리
+     * @return 조회된 일정 정보 + 해당 일정의 댓글 개수 + 해당 일정의 댓글 목록 + 페이징 정보
+     */
     @GetMapping("/{userId}/{scheduleId}")
     public ResponseEntity<ScheduleResponse> findUserSchedule(
             @NotNull @PathVariable("userId") Long userId,
@@ -58,6 +79,13 @@ public class ScheduleController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    /**
+     * 일정 수정
+     * @param id 일정 식별자
+     * @param request 수정할 일정 정보
+     * @param httpRequest 현재 로그인된 사용자 정보
+     * @return 수정된 일정 정보
+     */
     @PatchMapping("/{id}")
     public ResponseEntity<ScheduleResponse> updateSchedule( @NotNull @PathVariable("id") Long id,
                                                             @RequestBody @Valid UpdateScheduleRequest request,
@@ -69,6 +97,12 @@ public class ScheduleController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    /**
+     * 일정 삭제
+     * @param id 일정 식별자
+     * @param httpRequest 현재 로그인된 사용자 정보
+     * @return 성공 시 NO_CONTENT 응답
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSchedule(@NotNull @PathVariable("id") Long id,
                                                HttpServletRequest httpRequest) {
