@@ -8,9 +8,9 @@ import task.schedule.entity.Users;
 @AllArgsConstructor
 public class UserResponse {
 
-    private Long id;
-    private String name;
-    private String email;
+    private final Long id;
+    private final String name;
+    private final String email;
 
     public UserResponse(Users user) {
         this.id = user.getId();
