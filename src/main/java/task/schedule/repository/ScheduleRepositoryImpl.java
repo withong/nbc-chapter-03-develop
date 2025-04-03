@@ -83,7 +83,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
         if (condition.getYear() != null) builder.and(schedule.date.year().eq(condition.getYear()));
         if (condition.getMonth() != null) builder.and(schedule.date.month().eq(condition.getMonth()));
         if (condition.getDate() != null) builder.and(schedule.date.eq(condition.getDate()));
-        if (condition.getTitle() != null) builder.and(schedule.content.containsIgnoreCase(condition.getTitle()));
+        if (condition.getTitle() != null) builder.and(schedule.title.containsIgnoreCase(condition.getTitle()));
         if (condition.getContent() != null) builder.and(schedule.content.containsIgnoreCase(condition.getContent()));
 
         return builder;
