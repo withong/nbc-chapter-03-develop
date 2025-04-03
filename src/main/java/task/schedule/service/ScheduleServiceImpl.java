@@ -20,6 +20,9 @@ import task.schedule.repository.UserRepository;
 
 import java.time.LocalDate;
 
+/**
+ * 일정 관련 내부 로직
+ */
 @Service
 @RequiredArgsConstructor
 public class ScheduleServiceImpl implements ScheduleService {
@@ -28,6 +31,14 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
 
+    /**
+     * 일정 등록
+     * @param userId 현재 로그인된 사용자의 식별자
+     * @param date 일정 날짜
+     * @param title 일정 제목
+     * @param content 일정 내용
+     * @return 등록된 일정 정보
+     */
     @Override
     public ScheduleResponse saveSchedule(Long userId, LocalDate date, String title, String content) {
         Users user = getUserById(userId);
@@ -37,6 +48,13 @@ public class ScheduleServiceImpl implements ScheduleService {
         return new ScheduleResponse(saved);
     }
 
+    /**
+     * 조회 조건 기반 특정 사용자의 일정 목록 조회
+     * @param userId 조회할 사용자의 식별자
+     * @param request 조회 조건
+     * @param pageable 페이징 정보
+     * @return 해당 사용자의 일정 목록 (댓글 수, 페이징 처리, 페이징 정보 포함)
+     */
     @Override
     public PageResponse<ScheduleResponse> findSchedulesByCondition(Long userId, SearchScheduleRequest request, Pageable pageable) {
         Users user = getUserById(userId);
@@ -54,6 +72,13 @@ public class ScheduleServiceImpl implements ScheduleService {
         );
     }
 
+    /**
+     * 특정 사용자의 일정 단건 조회 (해당 일정의 댓글 목록 포함)
+     * @param userId 조회할 사용자의 식별자
+     * @param id 조회할 일정의 식별자
+     * @param pageable 페이징 정보
+     * @return 조회된 일정 정보 (해당 일정의 댓글 수, 댓글 목록, 댓글 페이징 처리, 댓글 페이징 정보 포함)
+     */
     @Override
     public ScheduleResponse findUserScheduleWithComments(Long userId, Long id, Pageable pageable) {
         Users user = getUserById(userId);
@@ -72,6 +97,18 @@ public class ScheduleServiceImpl implements ScheduleService {
         return new ScheduleResponse(schedule, commentCount, commentResponses);
     }
 
+    /**
+     * 일정 수정
+     * - 일정 작성자와 현재 로그인된 사용자가 일치할 경우 수정 가능
+     * - 변경할 내용이 없을 경우 NO_CHANGES 응답
+     *
+     * @param id 수정할 일정의 식별자
+     * @param userId 현재 로그인된 사용자의 식별자
+     * @param date 수정할 일정 날짜
+     * @param title 수정할 일정 제목
+     * @param content 수정할 일정 내용
+     * @return 수정된 일정 정보
+     */
     @Override
     @Transactional
     public ScheduleResponse updateSchedule(Long id, Long userId, LocalDate date, String title, String content) {
@@ -98,6 +135,13 @@ public class ScheduleServiceImpl implements ScheduleService {
         return new ScheduleResponse(schedule);
     }
 
+    /**
+     * 일정 삭제
+     * - 일정 작성자와 현재 로그인된 사용자가 일치할 경우 삭제 가능
+     *
+     * @param id 삭제할 일정 식별자
+     * @param userId 현재 로그인된 사용자의 식별자
+     */
     @Override
     @Transactional
     public void deleteSchedule(Long id, Long userId) {
